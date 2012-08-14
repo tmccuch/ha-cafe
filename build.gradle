@@ -1,0 +1,46 @@
+description = 'cafe-ha'
+
+group = 'cafe-ha'
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'java'
+sourceCompatibility=1.6
+targetCompatibility=1.6
+
+
+repositories {
+    maven { url 'https://repo.springsource.org/libs-snapshot' }
+    maven { url 'http://www.gridgainsystems.com/maven2' }
+    maven { url 'http://snapshots.jboss.org/maven2'}
+}
+
+dependencies {
+ 
+    // spring integration libraries
+    //compile "org.springframework.integration:spring-integration-amqp:2.2.0.BUILD-SNAPSHOT"
+    compile files('spring-integration-amqp-2.2.0.BUILD-SNAPSHOT.jar')
+    
+    compile("org.springframework.amqp:spring-rabbit:1.1.1.RELEASE") {
+			exclude group: 'org.springframework', module: 'spring-aop'
+			exclude group: 'org.springframework', module: 'spring-beans'
+			exclude group: 'org.springframework', module: 'spring-context'
+			exclude group: 'org.springframework', module: 'spring-core'
+			exclude group: 'org.springframework', module: 'spring-oxm'
+			exclude group: 'org.springframework', module: 'spring-tx'
+	}
+    
+    compile "org.springframework.integration:spring-integration-gemfire:2.2.0.BUILD-SNAPSHOT"
+    compile "org.springframework.integration:spring-integration-http:2.2.0.BUILD-SNAPSHOT"
+    
+    // other dependencies
+    compile "org.springframework:spring-webmvc:3.1.2.RELEASE"
+    compile "log4j:log4j:1.2.16"
+    compile "org.codehaus.jackson:jackson-core-asl:1.9.2"
+    compile "org.codehaus.jackson:jackson-mapper-asl:1.9.2"
+}
+
+task wrapper(type: Wrapper) {
+    description = 'Generates gradlew[.bat] scripts'
+}
+

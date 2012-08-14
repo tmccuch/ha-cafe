@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:cloud="http://schema.cloudfoundry.org/spring"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://schema.cloudfoundry.org/spring http://schema.cloudfoundry.org/spring/cloudfoundry-spring-0.8.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
+		http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Request that queues, exchanges and bindings be automatically declared 
+        on the broker: -->
+    <rabbit:admin connection-factory="rabbitConnectionFactory" />
+<!-- addresses="172.16.227.150,172.16.227.151" -->
+    <rabbit:connection-factory id="rabbitConnectionFactory" addresses="localhost" />
+    	
+<!-- rabbit exchanges, queues, and bindings used by this app -->	
+	<rabbit:topic-exchange name="cafe-drinks" auto-delete="true" durable="true">
+		<rabbit:bindings>
+			<rabbit:binding queue="cold-drinks" pattern="drink.cold"/>
+			<rabbit:binding queue="all-cold-drinks" pattern="drink.cold"/>
+			<rabbit:binding queue="hot-drinks" pattern="drink.hot"/>
+		</rabbit:bindings>
+	</rabbit:topic-exchange> 
+	
+	<rabbit:topic-exchange name="cafe-orders" auto-delete="false" durable="true">
+		<rabbit:bindings>
+			<rabbit:binding queue="new-orders" pattern="order.new"/>
+		</rabbit:bindings>
+	</rabbit:topic-exchange>
+	
+	<rabbit:queue-arguments id="haArgs">
+   		<entry key="x-ha-policy" value="all" />
+	</rabbit:queue-arguments>
+	
+	<rabbit:queue name="hot-drinks" auto-delete="false" durable="true" queue-arguments="haArgs" />	
+	<rabbit:queue name="new-orders" auto-delete="false" durable="true" queue-arguments="haArgs" />	
+	<rabbit:queue name="all-hot-drinks" auto-delete="false" durable="true" queue-arguments="haArgs" />	
+	<rabbit:queue name="hot-drink-replies" auto-delete="false" durable="true" queue-arguments="haArgs" />		
+	<rabbit:queue name="cold-drinks" auto-delete="false" durable="true" queue-arguments="haArgs" />	
+	<rabbit:queue name="all-cold-drinks" auto-delete="false" durable="true" queue-arguments="haArgs" />	
+	<rabbit:queue name="cold-drink-replies" auto-delete="false" durable="true" queue-arguments="haArgs" />
+	<rabbit:queue name="new-deliveries" auto-delete="false" durable="true" queue-arguments="haArgs" />	
+
+</beans>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-amqp="http://www.springframework.org/schema/integration/amqp"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:int-file="http://www.springframework.org/schema/integration/file"
+	xmlns:int-http="http://www.springframework.org/schema/integration/http"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-2.2.xsd
+		http://www.springframework.org/schema/integration/amqp http://www.springframework.org/schema/integration/amqp/spring-integration-amqp-2.2.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.2.xsd
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file-2.2.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
+		http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <import resource="classpath:org/springframework/integration/samples/cafe/cafeDemo-amqp-config-xml.xml" />
+	
+	<int-http:inbound-gateway id="httpInboundGateway" 
+									  request-channel="jsonNewOrders" 
+									  name="/placeOrder.htm" 
+									  supported-methods="GET, POST" 
+									  reply-timeout="60000"/>
+
+	<int-amqp:outbound-gateway 
+		id="cafeOperations" 
+		request-channel="jsonNewOrders" 
+		exchange-name="cafe-orders"
+		routing-key="order.new"
+		amqp-template="newOrderTemplate" />
+		
+	<rabbit:template id="newOrderTemplate" 
+    	connection-factory="rabbitConnectionFactory" 
+		reply-queue="new-deliveries"
+    	reply-timeout="60000">
+    	<rabbit:reply-listener/>
+    </rabbit:template>
+
+</beans>
