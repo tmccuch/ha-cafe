@@ -18,7 +18,11 @@ repositories {
 dependencies {
  
     // spring integration libraries
+    //******** Uncomment once https://jira.springsource.org/browse/INT-2713 is addressed
     //compile "org.springframework.integration:spring-integration-amqp:2.2.0.BUILD-SNAPSHOT"
+    //******** End
+    
+    //******** Remove the following block once https://jira.springsource.org/browse/INT-2713 is addressed ********
     compile files('spring-integration-amqp-2.2.0.BUILD-SNAPSHOT.jar')
     
     compile("org.springframework.amqp:spring-rabbit:1.1.1.RELEASE") {
@@ -29,6 +33,7 @@ dependencies {
 			exclude group: 'org.springframework', module: 'spring-oxm'
 			exclude group: 'org.springframework', module: 'spring-tx'
 	}
+	//******** End of block to be removed
     
     compile "org.springframework.integration:spring-integration-gemfire:2.2.0.BUILD-SNAPSHOT"
     compile "org.springframework.integration:spring-integration-http:2.2.0.BUILD-SNAPSHOT"
